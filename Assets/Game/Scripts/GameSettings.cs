@@ -45,6 +45,21 @@ namespace Game
             get { return timingSettings; }
         }
 
+        public ItemSettings SquareSettings
+        {
+            get { return squareSettings; }
+        }
+
+        public ItemSettings CircleSettings
+        {
+            get { return circleSettings; }
+        }
+
+        public ItemSettings TriangleSettings
+        {
+            get { return triangleSettings; }
+        }
+
         #endregion
     
         #region Public methods
@@ -62,19 +77,19 @@ namespace Game
         {
             Container.BindFactory<Item, Item.SquareFactory>()
                      .WithId(Item.ObjectType.SQUARE)
-                     .FromComponentInNewPrefab(squareSettings.Prefab)
+                     .FromComponentInNewPrefab(SquareSettings.Prefab)
                      .WithGameObjectName("Square")
                      .UnderTransformGroup("GameItems");
 
             Container.BindFactory<Item, Item.CircleFactory>()
                      .WithId(Item.ObjectType.CIRCLE)
-                     .FromComponentInNewPrefab(circleSettings.Prefab)
+                     .FromComponentInNewPrefab(CircleSettings.Prefab)
                      .WithGameObjectName("Circle")
                      .UnderTransformGroup("GameItems");
 
             Container.BindFactory<Item, Item.TriangleFactory>()
                      .WithId(Item.ObjectType.TRIANGLE)
-                     .FromComponentInNewPrefab(triangleSettings.Prefab)
+                     .FromComponentInNewPrefab(TriangleSettings.Prefab)
                      .WithGameObjectName("Triangle")
                      .UnderTransformGroup("GameItems");
 

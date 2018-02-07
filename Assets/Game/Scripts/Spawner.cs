@@ -16,6 +16,26 @@ public class Spawner : MonoBehaviour
     private GameSettings gameSettings;
 
     #endregion
+    
+    #region Public methods
+
+    
+    public Item PlaceSquare(int width, int height)
+    {
+        return PlaceObject(width, height, squarePool);
+    }
+
+    public Item PlaceCircle(int width, int height)
+    {
+        return PlaceObject(width, height, circlePool);
+    }
+    
+    public Item PlaceTriangle(int width, int height)
+    {
+        return PlaceObject(width, height, trianglePool);
+    }
+    
+    #endregion
 
     #region Private methods
 
@@ -39,6 +59,20 @@ public class Spawner : MonoBehaviour
                               item => Destroy(item.gameObject),
                               item => { item.gameObject.SetActive(true); },
                               item => { item.gameObject.SetActive(false); });
+    }
+
+    /// <summary>
+    /// Places game item on game field.
+    /// </summary>
+    /// <param name="width">Position X</param>
+    /// <param name="height">Position Y</param>
+    /// <param name="pool">Pool, which spawns items</param>
+    private Item PlaceObject(int width, int height, Pool<Item> pool)
+    {
+        Item item = pool.GetNewObject();
+        item.Width = width;
+        item.Height = height;
+        return item;
     }
 
     #endregion

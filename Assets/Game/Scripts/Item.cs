@@ -8,6 +8,30 @@ namespace Game
 {
     public class Item : MonoBehaviour
     {
+        #region Properties
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+        
+        #endregion
+        
+        #region Private methods
+
+        /// <summary>
+        /// Recalculates gameObject world position after changing Width/Height properties
+        /// </summary>
+        private void InvalidatePosition()
+        {
+            /* todo    - implement
+             * @author - Dvurechenskiyi
+             * @date   - 07.02.2018
+             * @time   - 17:56
+            */            
+        }
+        
+        #endregion
+        
         public class SquareFactory : Factory<Item>
         {
         }

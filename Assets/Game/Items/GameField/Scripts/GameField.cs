@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ModestTree.Util;
 using UnityEngine;
 using Zenject;
@@ -25,14 +26,33 @@ namespace Game
         
         #region Public methods
 
-//        public ValuePair<int, int> GetFreeField()
-//        {
-//            /* todo    - implement
-//             * @author - Артур
-//             * @date   - 07.02.2018
-//             * @time   - 0:08
-//            */
-//        }
+        /* todo    - consider to make a property. Add/delete free/placed coordinates for performance optimization
+         * @author - Dvurechenskiyi
+         * @date   - 07.02.2018
+         * @time   - 17:48
+        */        
+        public List<Tuple<int, int>> GetFreeFields()
+        {
+            List<Tuple<int, int>> list = new List<Tuple<int, int>>();
+            
+            for (int i = 0; i < field.GetLength(0); i++)
+            {
+                for (int j = 0; j < field.GetLength(1); j++)
+                {
+                    if (!field[i,j])
+                    {
+                        list.Add(Tuple.Create(i, j));
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        public void SetItem(int width, int height, Item item)
+        {
+            field[width, height] = item;
+        }
         
         #endregion
     }

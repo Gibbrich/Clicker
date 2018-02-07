@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Game;
 using Gamelogic.Extensions;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class GameController : MonoBehaviour
 
     [Inject] private GameSettings gameSettings;
     [Inject] private GameField gameField;
+    [Inject] private Spawner spawner;
     private Clock clock;
 
     #endregion
@@ -40,11 +43,39 @@ public class GameController : MonoBehaviour
 
     private void OnSecondsChanged()
     {
+        var freeFields = gameField.GetFreeFields();
+
+        for (int i = 0; i < gameSettings.SquareSettings.AppearRateMaxCount; i++)
+        {
+            SpawnItem(freeFields, spawner.PlaceSquare);
+        }
+
+        for (int i = 0; i < gameSettings.CircleSettings.AppearRateMaxCount; i++)
+        {
+            SpawnItem(freeFields, spawner.PlaceCircle);
+        }
+
+        for (int i = 0; i < gameSettings.TriangleSettings.AppearRateMaxCount; i++)
+        {
+            SpawnItem(freeFields, spawner.PlaceTriangle);
+        }
+        
         /* todo    - implement
-         * @author - Артур
+         * @author - Dvurechenskiyi
          * @date   - 07.02.2018
-         * @time   - 0:08
+         * @time   - 18:03
         */        
+    }
+
+    private void SpawnItem(List<Tuple<int, int>> freeFields, Func<int, int, Item> createFunc)
+    {
+        int id = Random.Range(0, freeFields.Count);
+        var fieldCoordinates = freeFields[id];
+
+        Item item = createFunc(fieldCoordinates.Item1, fieldCoordinates.Item2);
+        gameField.SetItem(fieldCoordinates.Item1, fieldCoordinates.Item2, item);
+        
+        freeFields.RemoveAt(id);
     }
     
     #endregion
