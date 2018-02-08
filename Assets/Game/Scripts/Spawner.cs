@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Game;
 using Gamelogic.Extensions;
+using ModestTree.Util;
 using UnityEngine;
 using Zenject;
 
@@ -14,25 +15,26 @@ public class Spawner : MonoBehaviour
     private Pool<Item> trianglePool;
 
     private GameSettings gameSettings;
+    private GameField field;
 
     #endregion
     
     #region Public methods
 
     
-    public Item PlaceSquare(int width, int height)
+    public void PlaceSquare()
     {
-        return PlaceObject(width, height, squarePool);
+        squarePool.GetNewObject();
     }
 
-    public Item PlaceCircle(int width, int height)
+    public void PlaceCircle()
     {
-        return PlaceObject(width, height, circlePool);
+        circlePool.GetNewObject();
     }
     
-    public Item PlaceTriangle(int width, int height)
+    public void PlaceTriangle()
     {
-        return PlaceObject(width, height, trianglePool);
+        trianglePool.GetNewObject();
     }
     
     #endregion
@@ -43,13 +45,17 @@ public class Spawner : MonoBehaviour
     private void Init([Inject(Id = Item.ObjectType.SQUARE)] Item.SquareFactory squareFactory,
                       [Inject(Id = Item.ObjectType.CIRCLE)] Item.CircleFactory circleFactory,
                       [Inject(Id = Item.ObjectType.TRIANGLE)] Item.TriangleFactory triangleFactory,
-                      GameSettings gameSettings)
+                      GameSettings gameSettings,
+                      GameField field)
     {
+        // first init pools, as during pool initiation calls pool.SetToSleep() callback.
+        // This call back also add free field to Game firld and we don't want populate field excess fields
         squarePool = InitPool(squareFactory);
         circlePool = InitPool(circleFactory);
         trianglePool = InitPool(triangleFactory);
 
         this.gameSettings = gameSettings;
+        this.field = field;
     }
 
     private Pool<Item> InitPool(Factory<Item> factory)
@@ -57,22 +63,30 @@ public class Spawner : MonoBehaviour
         return new Pool<Item>(100,
                               factory.Create,
                               item => Destroy(item.gameObject),
-                              item => { item.gameObject.SetActive(true); },
-                              item => { item.gameObject.SetActive(false); });
+                              ItemWakeUp,
+                              ItemSetToSleep);
     }
 
-    /// <summary>
-    /// Places game item on game field.
-    /// </summary>
-    /// <param name="width">Position X</param>
-    /// <param name="height">Position Y</param>
-    /// <param name="pool">Pool, which spawns items</param>
-    private Item PlaceObject(int width, int height, Pool<Item> pool)
+    private void ItemWakeUp(Item item)
     {
-        Item item = pool.GetNewObject();
-        item.Width = width;
-        item.Height = height;
-        return item;
+        var freeField = field.GetRandomFreeField();
+        item.SetPosition(freeField.First, freeField.Second);
+        item.SetColor(gameSettings.GetColor());
+        item.gameObject.SetActive(true);
+    }
+
+    private void ItemSetToSleep(Item item)
+    {
+        if (field)
+        {
+            /* todo    - check correctness
+             * @author - Dvurechenskiyi
+             * @date   - 08.02.2018
+             * @time   - 11:30
+             */        
+            field.AddFreeField((int) item.transform.position.x, (int) item.transform.position.y);
+        }
+        item.gameObject.SetActive(false);
     }
 
     #endregion

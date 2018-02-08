@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gamelogic.Extensions;
 using ModestTree.Util;
 using UnityEngine;
 using Zenject;
@@ -11,7 +12,7 @@ namespace Game
         #region Private fields
 
         [Inject] private GameSettings gameSettings;
-        private Item[,] field;
+        private List<ValuePair<int, int>> freeFields;
 
         #endregion
         
@@ -19,39 +20,32 @@ namespace Game
 
         private void Start()
         {
-            field = new Item[gameSettings.FieldSettings.Width, gameSettings.FieldSettings.Height];
+            int capacity = gameSettings.FieldSettings.Width * gameSettings.FieldSettings.Height;
+            freeFields = new List<ValuePair<int, int>>(capacity);
+            
+            for (int i = 0; i < gameSettings.FieldSettings.Width; i++)
+            {
+                for (int j = 0; j < gameSettings.FieldSettings.Height; j++)
+                {
+                    freeFields.Add(new ValuePair<int, int>(i, j));
+                }
+            }
         }
 
         #endregion
         
         #region Public methods
 
-        /* todo    - consider to make a property. Add/delete free/placed coordinates for performance optimization
-         * @author - Dvurechenskiyi
-         * @date   - 07.02.2018
-         * @time   - 17:48
-        */        
-        public List<Tuple<int, int>> GetFreeFields()
+        public ValuePair<int, int> GetRandomFreeField()
         {
-            List<Tuple<int, int>> list = new List<Tuple<int, int>>();
-            
-            for (int i = 0; i < field.GetLength(0); i++)
-            {
-                for (int j = 0; j < field.GetLength(1); j++)
-                {
-                    if (!field[i,j])
-                    {
-                        list.Add(Tuple.Create(i, j));
-                    }
-                }
-            }
-
-            return list;
+            var freeField = Utils.GetRandomItem(freeFields);
+            freeFields.Remove(freeField);
+            return freeField;
         }
 
-        public void SetItem(int width, int height, Item item)
+        public void AddFreeField(int x, int y)
         {
-            field[width, height] = item;
+            freeFields.Add(new ValuePair<int, int>(x, y));
         }
         
         #endregion

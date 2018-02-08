@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Gamelogic.Extensions;
 using UnityEngine;
 using Zenject;
 
@@ -8,26 +9,32 @@ namespace Game
 {
     public class Item : MonoBehaviour
     {
-        #region Properties
+        #region Fields
 
-        public int Width { get; set; }
-
-        public int Height { get; set; }
+        private SpriteRenderer spriteRenderer;
         
         #endregion
         
-        #region Private methods
+        #region Unity callbacks
 
-        /// <summary>
-        /// Recalculates gameObject world position after changing Width/Height properties
-        /// </summary>
-        private void InvalidatePosition()
+        private void Awake()
         {
-            /* todo    - implement
-             * @author - Dvurechenskiyi
-             * @date   - 07.02.2018
-             * @time   - 17:56
-            */            
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        #endregion
+        
+        #region Public methods
+
+        public void SetColor(Color color)
+        {
+            spriteRenderer.color = color;
+        }
+
+        public void SetPosition(int posX, int posY)
+        {
+            gameObject.transform.SetX(posX);
+            gameObject.transform.SetY(posY);
         }
         
         #endregion
