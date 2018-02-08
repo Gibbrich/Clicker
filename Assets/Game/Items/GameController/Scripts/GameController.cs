@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     [Inject] private GameSettings gameSettings;
     [Inject] private GameField gameField;
     [Inject] private Spawner spawner;
+    [Inject] private UIController uiController;
+    
     private Clock clock;
 
     private Item correctItem;
@@ -23,16 +25,10 @@ public class GameController : MonoBehaviour
 
     private int score;
 
-    private Dictionary<Item.ItemType, Factory<Item.ItemType, Item>> factories;
-
     #endregion
     
     #region Properties
     
-    public Item CorrectItem
-    {
-        get { return correctItem; }
-    }
 
     public int Score
     {
@@ -40,7 +36,13 @@ public class GameController : MonoBehaviour
         set
         {
             score = Mathf.Clamp(value, 0, gameSettings.PointsSettings.PointsTarget);
+            uiController.UpdateScoreDisplay(score);
         }
+    }
+
+    public Item CorrectItem
+    {
+        get { return correctItem; }
     }
 
     #endregion
@@ -54,7 +56,10 @@ public class GameController : MonoBehaviour
         clock.OnSecondsChanged += OnSecondsChanged;
         clock.Unpause();
         
-        ChangeDisplayedItem();
+        ChangeCorrectItem();
+        uiController.UpdateTimerDisplay(clock.TimeInSeconds);
+        uiController.UpdateScoreDisplay(score);
+        uiController.UpdatePlayerNameDisplay();
     }
 
     private void Update()
@@ -63,7 +68,8 @@ public class GameController : MonoBehaviour
 
         if (Time.time - correctItemShowTimeStamp >= gameSettings.TimingSettings.ItemDisplayTime)
         {
-            ChangeDisplayedItem();
+            ChangeCorrectItem();
+            Score -= gameSettings.PointsSettings.TimeOutPenalty;
             correctItemShowTimeStamp = Time.time;
         }
     }
@@ -76,22 +82,11 @@ public class GameController : MonoBehaviour
     #endregion
     
     #region Private methods
-    
-    [Inject]
-    private void Init([Inject(Id = Item.ItemType.SQUARE)] Item.SquareFactory squareFactory,
-                      [Inject(Id = Item.ItemType.CIRCLE)] Item.CircleFactory circleFactory,
-                      [Inject(Id = Item.ItemType.TRIANGLE)] Item.TriangleFactory triangleFactory)
-    {
-        factories = new Dictionary<Item.ItemType, Factory<Item.ItemType, Item>>
-        {
-            {Item.ItemType.SQUARE, squareFactory},
-            {Item.ItemType.CIRCLE, circleFactory},
-            {Item.ItemType.TRIANGLE, triangleFactory}
-        };
-    }
 
     private void OnSecondsChanged()
     {
+        uiController.UpdateTimerDisplay(clock.TimeInSeconds);
+        
         for (int i = 0; i < gameSettings.SquareSettings.AppearRateMaxCount; i++)
         {
             spawner.PlaceSquare();
@@ -114,21 +109,13 @@ public class GameController : MonoBehaviour
         */        
     }
 
-    private void ChangeDisplayedItem()
+    private void ChangeCorrectItem()
     {
-        var pair = Utils.GetRandomItem(factories);
-        
-        correctItem = pair.Value.Create(pair.Key);
-        correctItem.Color = gameSettings.GetColor();
-        correctItem.PosX = -100;
-        correctItem.PosY = -100;
+        var itemTypes = Utils.GetEnumValues<ItemType>();
+        ItemType itemType = Utils.GetRandomItem(itemTypes);
 
-        /* todo    - consider set correctItem in UI
-         * @author - Dvurechenskiyi
-         * @date   - 08.02.2018
-         * @time   - 12:25
-        */
-        print(string.Format("Item type: {0}, color: {1}", correctItem.Type, correctItem.Color));
+        correctItem = new Item(gameSettings.GetColor(), itemType);
+        uiController.UpdateDisplayedItem(correctItem.Type, correctItem.Color);
     }
     
     #endregion

@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
@@ -17,6 +18,10 @@ namespace Game
         {
             int id = Random.Range(0, dictionary.Count);
             return dictionary.ElementAt(id);
+        }
+        
+        public static IList<T> GetEnumValues<T>() {
+            return (T[])Enum.GetValues(typeof(T));
         }
     }
 }

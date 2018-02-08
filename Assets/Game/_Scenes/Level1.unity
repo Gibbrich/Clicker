@@ -302,8 +302,9 @@ GameObject:
   m_Component:
   - component: {fileID: 770585615}
   - component: {fileID: 770585616}
+  - component: {fileID: 770585617}
   m_Layer: 5
-  m_Name: Sprite
+  m_Name: CorrectItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,7 +317,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 770585614}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 152, z: 0}
+  m_LocalPosition: {x: 0, y: 230, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1747565828}
@@ -376,6 +377,17 @@ MonoBehaviour:
   mAtlas: {fileID: 114601457550082602, guid: 146daeed69929044d9b0f2eeb0859d2a, type: 2}
   mSpriteName: Circle
   mFillCenter: 1
+--- !u!114 &770585617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 770585614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ed732d33b8ddb4e82691fa8c008158, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &889833181
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +411,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 889833181}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -229, y: 212, z: 0}
+  m_LocalPosition: {x: -414, y: 289, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1747565828}
@@ -496,7 +508,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1137000313}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -334, y: 212, z: 0}
+  m_LocalPosition: {x: -519, y: 289, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1747565828}
@@ -790,7 +802,7 @@ Transform:
   m_GameObject: {fileID: 1747565824}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.004514673, y: 0.004514673, z: 0.004514673}
+  m_LocalScale: {x: 0.0033444816, y: 0.0033444816, z: 0.0033444816}
   m_Children:
   - {fileID: 1721850813}
   - {fileID: 1137000314}
@@ -811,7 +823,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _components: []
+  _components:
+  - {fileID: 1747565830}
   _identifier: 
   _context: {fileID: 98336484}
   _bindType: 0
@@ -826,6 +839,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c81fba005d0f12b41a887480a6ed5382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNameLabel: {fileID: 1137000315}
+  timerLabel: {fileID: 1874725973}
+  scoreLabel: {fileID: 889833183}
+  correctItemUIController: {fileID: 770585617}
 --- !u!1 &1874725971
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,7 +866,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1874725971}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 351, y: 212, z: 0}
+  m_LocalPosition: {x: 536, y: 289, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1747565828}

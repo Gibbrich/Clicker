@@ -11,9 +11,9 @@ public class Spawner : MonoBehaviour
 {
     #region Private fields
 
-    private Pool<Item> circlePool;
-    private Pool<Item> squarePool;
-    private Pool<Item> trianglePool;
+    private Pool<ItemController> circlePool;
+    private Pool<ItemController> squarePool;
+    private Pool<ItemController> trianglePool;
 
     private GameSettings gameSettings;
     private GameField field;
@@ -24,32 +24,32 @@ public class Spawner : MonoBehaviour
     
     public void PlaceSquare()
     {
-        squarePool.GetNewObject();
+        PlaceItemController(squarePool, gameSettings.SquareSettings.ItemMaxCount);
     }
 
     public void PlaceCircle()
     {
-        circlePool.GetNewObject();
+        PlaceItemController(circlePool, gameSettings.CircleSettings.ItemMaxCount);
     }
     
     public void PlaceTriangle()
     {
-        trianglePool.GetNewObject();
+        PlaceItemController(trianglePool, gameSettings.TriangleSettings.ItemMaxCount);
     }
 
-    public void ReleaseBulk(List<Item> items)
+    public void ReleaseBulk(List<ItemController> items)
     {
-        Item.ItemType type = items[0].Type;
-        Pool<Item> pool;
+        ItemType type = items[0].GetItemType();
+        Pool<ItemController> pool;
         switch (type)
         {
-            case Item.ItemType.SQUARE:
+            case ItemType.SQUARE:
                 pool = squarePool;
                 break;
-            case Item.ItemType.CIRCLE:
+            case ItemType.CIRCLE:
                 pool = circlePool;
                 break;
-            case Item.ItemType.TRIANGLE:
+            case ItemType.TRIANGLE:
                 pool = trianglePool;
                 break;
             default:
@@ -64,47 +64,62 @@ public class Spawner : MonoBehaviour
     #region Private methods
 
     [Inject]
-    private void Init([Inject(Id = Item.ItemType.SQUARE)] Item.SquareFactory squareFactory,
-                      [Inject(Id = Item.ItemType.CIRCLE)] Item.CircleFactory circleFactory,
-                      [Inject(Id = Item.ItemType.TRIANGLE)] Item.TriangleFactory triangleFactory,
+    private void Init([Inject(Id = ItemType.SQUARE)] ItemController.SquareFactory squareFactory,
+                      [Inject(Id = ItemType.CIRCLE)] ItemController.CircleFactory circleFactory,
+                      [Inject(Id = ItemType.TRIANGLE)] ItemController.TriangleFactory triangleFactory,
                       GameSettings gameSettings,
                       GameField field)
     {
         // first init pools, as during pool initiation calls pool.SetToSleep() callback.
         // This call back also add free field to Game firld and we don't want populate field excess fields
-        squarePool = InitPool(squareFactory, Item.ItemType.SQUARE);
-        circlePool = InitPool(circleFactory, Item.ItemType.CIRCLE);
-        trianglePool = InitPool(triangleFactory, Item.ItemType.TRIANGLE);
+        squarePool = InitPool(squareFactory, ItemType.SQUARE);
+        circlePool = InitPool(circleFactory, ItemType.CIRCLE);
+        trianglePool = InitPool(triangleFactory, ItemType.TRIANGLE);
 
         this.gameSettings = gameSettings;
         this.field = field;
     }
 
-    private Pool<Item> InitPool(Factory<Item.ItemType, Item> factory, Item.ItemType type)
+    private Pool<ItemController> InitPool(Factory<ItemType, ItemController> factory, ItemType type)
     {
-        return new Pool<Item>(100,
+        return new Pool<ItemController>(100,
                               () => factory.Create(type),
                               item => Destroy(item.gameObject),
                               ItemWakeUp,
                               ItemSetToSleep);
     }
 
-    private void ItemWakeUp(Item item)
+    private void ItemWakeUp(ItemController itemController)
     {
         var freeField = field.GetRandomFreeField();
-        item.PosX = freeField.First;
-        item.PosY = freeField.Second;
-        item.Color = gameSettings.GetColor();
-        item.gameObject.SetActive(true);
+        itemController.SetPosition(freeField.First, freeField.Second);
+        itemController.SetColor(gameSettings.GetColor());
+        itemController.gameObject.SetActive(true);
     }
 
-    private void ItemSetToSleep(Item item)
+    private void ItemSetToSleep(ItemController itemController)
     {
         if (field)
         {      
-            field.AddFreeField(item.PosX, item.PosY);
+            field.AddFreeField(itemController.GetPosX(), itemController.GetPosY());
         }
-        item.gameObject.SetActive(false);
+        itemController.gameObject.SetActive(false);
+    }
+
+    private void PlaceItemController(Pool<ItemController> pool, int maxCapacity)
+    {
+        if (!pool.IsObjectAvailable)
+        {
+            if (pool.Capacity <= maxCapacity)
+            {
+                pool.IncCapacity(100);
+                pool.GetNewObject();
+            }
+        }
+        else
+        {
+            pool.GetNewObject();
+        }
     }
 
     #endregion
