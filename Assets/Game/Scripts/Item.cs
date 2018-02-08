@@ -1,18 +1,72 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Gamelogic.Extensions;
 using UnityEngine;
 using Zenject;
 
 namespace Game
 {
+    /* todo    - split into ItemModel and ItemController
+     * @author - Dvurechenskiyi
+     * @date   - 08.02.2018
+     * @time   - 14:19
+    */    
     public class Item : MonoBehaviour
     {
         #region Fields
 
+        [Inject] private GameController gameController;
+        [Inject] private GameSettings gameSettings;
+        [Inject] private ItemType type;
+        [Inject] private Spawner spawner;
+        [Inject] private GameField field;
+
+        private int posX;
+        private int posY;
+        private Color color;
         private SpriteRenderer spriteRenderer;
+
+        #endregion
         
+        #region Properties
+        
+        public int PosX
+        {
+            get { return posX; }
+            set
+            {
+                posX = value; 
+                gameObject.transform.SetX(posX);
+            }
+        }
+
+        public int PosY
+        {
+            get { return posY; }
+            set
+            {
+                posY = value; 
+                gameObject.transform.SetY(posY);
+            }
+        }
+
+        public Color Color
+        {
+            get { return color; }
+            set
+            {
+                color = value; 
+                spriteRenderer.color = color;
+            }
+        }
+
+        public ItemType Type
+        {
+            get { return type; }
+        }
+
         #endregion
         
         #region Unity callbacks
@@ -22,36 +76,50 @@ namespace Game
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        #endregion
-        
-        #region Public methods
-
-        public void SetColor(Color color)
+        private void OnMouseDown()
         {
-            spriteRenderer.color = color;
+            if (type == gameController.CorrectItem.Type && color == gameController.CorrectItem.Color)
+            {
+                field.GetNeighbours(this).ForEach(item => item.Color = color);
+                spawner.ReleaseBulk(GetAllItems(color, type));
+                gameController.Score += gameSettings.PointsSettings.CorrectClickReward;
+                print("Correct item clicked");
+            }
+            else
+            {
+                GetAllItems(color, type).ForEach(item => item.Color = gameSettings.GetColor());
+                gameController.Score += gameSettings.PointsSettings.IncorrectClickPenalty;
+                print("Incorrect item clicked");
+            }
         }
 
-        public void SetPosition(int posX, int posY)
+        #endregion
+        
+        #region Private methods
+        
+        private List<Item> GetAllItems(Color color, ItemType type)
         {
-            gameObject.transform.SetX(posX);
-            gameObject.transform.SetY(posY);
-        }
+            Item[] items = FindObjectsOfType<Item>();
+            return items
+                    .Where(item => item.Type == type && item.Color == color)
+                    .ToList();
+        }        
         
         #endregion
         
-        public class SquareFactory : Factory<Item>
+        public class SquareFactory : Factory<ItemType, Item>
         {
         }
     
-        public class CircleFactory : Factory<Item>
+        public class CircleFactory : Factory<ItemType, Item>
         {
         }
     
-        public class TriangleFactory : Factory<Item>
+        public class TriangleFactory : Factory<ItemType, Item>
         {
         }
     
-        public enum ObjectType
+        public enum ItemType
         {
             SQUARE,
             CIRCLE,

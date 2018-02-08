@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Game;
 using Gamelogic.Extensions;
@@ -20,7 +21,6 @@ public class Spawner : MonoBehaviour
     #endregion
     
     #region Public methods
-
     
     public void PlaceSquare()
     {
@@ -36,32 +36,54 @@ public class Spawner : MonoBehaviour
     {
         trianglePool.GetNewObject();
     }
+
+    public void ReleaseBulk(List<Item> items)
+    {
+        Item.ItemType type = items[0].Type;
+        Pool<Item> pool;
+        switch (type)
+        {
+            case Item.ItemType.SQUARE:
+                pool = squarePool;
+                break;
+            case Item.ItemType.CIRCLE:
+                pool = circlePool;
+                break;
+            case Item.ItemType.TRIANGLE:
+                pool = trianglePool;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        items.ForEach(item => pool.Release(item));
+    }
     
     #endregion
 
     #region Private methods
 
     [Inject]
-    private void Init([Inject(Id = Item.ObjectType.SQUARE)] Item.SquareFactory squareFactory,
-                      [Inject(Id = Item.ObjectType.CIRCLE)] Item.CircleFactory circleFactory,
-                      [Inject(Id = Item.ObjectType.TRIANGLE)] Item.TriangleFactory triangleFactory,
+    private void Init([Inject(Id = Item.ItemType.SQUARE)] Item.SquareFactory squareFactory,
+                      [Inject(Id = Item.ItemType.CIRCLE)] Item.CircleFactory circleFactory,
+                      [Inject(Id = Item.ItemType.TRIANGLE)] Item.TriangleFactory triangleFactory,
                       GameSettings gameSettings,
                       GameField field)
     {
         // first init pools, as during pool initiation calls pool.SetToSleep() callback.
         // This call back also add free field to Game firld and we don't want populate field excess fields
-        squarePool = InitPool(squareFactory);
-        circlePool = InitPool(circleFactory);
-        trianglePool = InitPool(triangleFactory);
+        squarePool = InitPool(squareFactory, Item.ItemType.SQUARE);
+        circlePool = InitPool(circleFactory, Item.ItemType.CIRCLE);
+        trianglePool = InitPool(triangleFactory, Item.ItemType.TRIANGLE);
 
         this.gameSettings = gameSettings;
         this.field = field;
     }
 
-    private Pool<Item> InitPool(Factory<Item> factory)
+    private Pool<Item> InitPool(Factory<Item.ItemType, Item> factory, Item.ItemType type)
     {
         return new Pool<Item>(100,
-                              factory.Create,
+                              () => factory.Create(type),
                               item => Destroy(item.gameObject),
                               ItemWakeUp,
                               ItemSetToSleep);
@@ -70,21 +92,17 @@ public class Spawner : MonoBehaviour
     private void ItemWakeUp(Item item)
     {
         var freeField = field.GetRandomFreeField();
-        item.SetPosition(freeField.First, freeField.Second);
-        item.SetColor(gameSettings.GetColor());
+        item.PosX = freeField.First;
+        item.PosY = freeField.Second;
+        item.Color = gameSettings.GetColor();
         item.gameObject.SetActive(true);
     }
 
     private void ItemSetToSleep(Item item)
     {
         if (field)
-        {
-            /* todo    - check correctness
-             * @author - Dvurechenskiyi
-             * @date   - 08.02.2018
-             * @time   - 11:30
-             */        
-            field.AddFreeField((int) item.transform.position.x, (int) item.transform.position.y);
+        {      
+            field.AddFreeField(item.PosX, item.PosY);
         }
         item.gameObject.SetActive(false);
     }

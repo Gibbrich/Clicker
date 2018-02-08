@@ -15,14 +15,14 @@ namespace Game
         private List<ValuePair<int, int>> freeFields;
 
         #endregion
-        
+
         #region Unity callbacks
 
         private void Start()
         {
             int capacity = gameSettings.FieldSettings.Width * gameSettings.FieldSettings.Height;
             freeFields = new List<ValuePair<int, int>>(capacity);
-            
+
             for (int i = 0; i < gameSettings.FieldSettings.Width; i++)
             {
                 for (int j = 0; j < gameSettings.FieldSettings.Height; j++)
@@ -33,7 +33,7 @@ namespace Game
         }
 
         #endregion
-        
+
         #region Public methods
 
         public ValuePair<int, int> GetRandomFreeField()
@@ -47,7 +47,22 @@ namespace Game
         {
             freeFields.Add(new ValuePair<int, int>(x, y));
         }
-        
+
+        /// <summary>
+        /// Returns neighbours by grid offset 1 in all directions
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public List<Item> GetNeighbours(Item item)
+        {
+            /* todo    - implement
+             * @author - Dvurechenskiyi
+             * @date   - 08.02.2018
+             * @time   - 14:10
+            */
+            return new List<Item>();
+        }
+
         #endregion
     }
 
@@ -55,14 +70,14 @@ namespace Game
     public class GameFieldSettings
     {
         #region Editor tweakable fields
-        
+
         [SerializeField] private int width = 32;
-        [SerializeField] private int height = 32;            
-        
+        [SerializeField] private int height = 32;
+
         #endregion
-        
+
         #region Properties
-        
+
         public int Width
         {
             get { return width; }

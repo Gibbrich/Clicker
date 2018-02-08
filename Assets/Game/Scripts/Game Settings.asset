@@ -29,25 +29,25 @@ MonoBehaviour:
   squareSettings:
     prefab: {fileID: 1611749710821530, guid: 4b2c029300dffcf44a65f106dd03ebff, type: 2}
     squareObjectMaxCount: 400
-    appearRateMaxCount: 10
+    appearRateMaxCount: 3
   circleSettings:
     prefab: {fileID: 1433523186926726, guid: d43047bdc1b7f534c972a24c532c0d17, type: 2}
     squareObjectMaxCount: 400
-    appearRateMaxCount: 10
+    appearRateMaxCount: 3
   triangleSettings:
     prefab: {fileID: 1674520200840462, guid: c65706fe9e2c3aa47bea0950d0ca0a57, type: 2}
     squareObjectMaxCount: 400
-    appearRateMaxCount: 10
+    appearRateMaxCount: 3
   colors:
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 1, g: 0, b: 0, a: 0}
-  - {r: 1, g: 0.653, b: 0, a: 0}
-  - {r: 1, g: 1, b: 0, a: 0}
-  - {r: 0, g: 1, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.653, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
   - {r: 0, g: 1, b: 0.8745098, a: 1}
-  - {r: 0, g: 0.616, b: 1, a: 0}
-  - {r: 0, g: 0, b: 1, a: 0}
-  - {r: 0.44827604, g: 0, b: 1, a: 0}
-  - {r: 1, g: 0, b: 0.972414, a: 0}
-  - {r: 1, g: 1, b: 1, a: 0}
-  - {r: 0.43382353, g: 0.31542403, b: 0.060607705, a: 0}
+  - {r: 0, g: 0.616, b: 1, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  - {r: 0.44827604, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0.972414, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.43382353, g: 0.31542403, b: 0.060607705, a: 1}

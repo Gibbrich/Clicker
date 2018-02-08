@@ -75,20 +75,20 @@ namespace Game
 
         public override void InstallBindings()
         {
-            Container.BindFactory<Item, Item.SquareFactory>()
-                     .WithId(Item.ObjectType.SQUARE)
+            Container.BindFactory<Item.ItemType, Item, Item.SquareFactory>()
+                     .WithId(Item.ItemType.SQUARE)
                      .FromComponentInNewPrefab(SquareSettings.Prefab)
                      .WithGameObjectName("Square")
                      .UnderTransformGroup("GameItems");
 
-            Container.BindFactory<Item, Item.CircleFactory>()
-                     .WithId(Item.ObjectType.CIRCLE)
+            Container.BindFactory<Item.ItemType, Item, Item.CircleFactory>()
+                     .WithId(Item.ItemType.CIRCLE)
                      .FromComponentInNewPrefab(CircleSettings.Prefab)
                      .WithGameObjectName("Circle")
                      .UnderTransformGroup("GameItems");
 
-            Container.BindFactory<Item, Item.TriangleFactory>()
-                     .WithId(Item.ObjectType.TRIANGLE)
+            Container.BindFactory<Item.ItemType, Item, Item.TriangleFactory>()
+                     .WithId(Item.ItemType.TRIANGLE)
                      .FromComponentInNewPrefab(TriangleSettings.Prefab)
                      .WithGameObjectName("Triangle")
                      .UnderTransformGroup("GameItems");
