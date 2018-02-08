@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4977787823467488}
   - component: {fileID: 212399922755782820}
-  - component: {fileID: 68783750386923244}
   - component: {fileID: 114538858810645538}
+  - component: {fileID: 61546123025709010}
   m_Layer: 0
   m_Name: Triangle
   m_TagString: Untagged
@@ -42,8 +42,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!68 &68783750386923244
-EdgeCollider2D:
+--- !u!61 &61546123025709010
+BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -55,12 +55,18 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.5, y: 0.5}
+    newSize: {x: 0.5, y: 0.5}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.25, y: -0.25}
-  - {x: 0, y: 0.25}
-  - {x: 0.25, y: -0.25}
-  - {x: -0.25, y: -0.25}
 --- !u!114 &114538858810645538
 MonoBehaviour:
   m_ObjectHideFlags: 1
