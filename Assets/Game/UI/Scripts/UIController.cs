@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private UILabel timerLabel;
     [SerializeField] private UILabel scoreLabel;
     [SerializeField] private UIItem correctItemUIController;
+    [SerializeField] private GameObject pausePanel;
 
     #endregion
     
@@ -38,6 +39,18 @@ public class UIController : MonoBehaviour
          * @date   - 08.02.2018
          * @time   - 21:43
         */        
+    }
+
+    public void OpenPauseMenu()
+    {
+        correctItemUIController.gameObject.SetActive(false);
+        pausePanel.SetActive(true);      
+    }
+
+    public void ClosePauseMenu()
+    {
+        correctItemUIController.gameObject.SetActive(true);
+        pausePanel.SetActive(false);
     }
     
     #endregion

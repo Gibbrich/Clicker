@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game;
 using Gamelogic.Extensions;
+using ModestTree;
 using UnityEngine;
 using Zenject;
 
@@ -71,18 +72,26 @@ namespace Game
 
         private void OnMouseDown()
         {
-            if (item.Type == gameController.CorrectItem.Type && item.Color == gameController.CorrectItem.Color)
+            if (gameController.State == GameState.PLAY)
             {
-                field.GetNeighbours(this)
-                     .ForEach(itemController => itemController.SetColor(item.Color));
-                spawner.ReleaseBulk(GetAllItems(item.Color, item.Type));
-                gameController.Score += gameSettings.PointsSettings.CorrectClickReward;
-            }
-            else
-            {
-                GetAllItems(item.Color, item.Type)
-                    .ForEach(itemController => itemController.SetColor(gameSettings.GetColor()));
-                gameController.Score -= gameSettings.PointsSettings.IncorrectClickPenalty;
+                if (item.Type == gameController.CorrectItem.Type && item.Color == gameController.CorrectItem.Color)
+                {
+                    var itemControllers = GetAllItems(item.Color, item.Type);
+                    itemControllers.ForEach(controller => field.AddFreeField(controller.GetPosX(), controller.GetPosY()));
+                    spawner.ReleaseBulk(itemControllers);
+                
+                    field.GetNeighbours(this)
+                         .ForEach(controller => controller.SetColor(item.Color));
+                
+                    gameController.ChangeCorrectItem();
+                    gameController.Score += gameSettings.PointsSettings.CorrectClickReward;
+                }
+                else
+                {
+                    GetAllItems(item.Color, item.Type)
+                        .ForEach(itemController => itemController.SetColor(gameSettings.GetColor()));
+                    gameController.Score -= gameSettings.PointsSettings.IncorrectClickPenalty;
+                }
             }
         }
 

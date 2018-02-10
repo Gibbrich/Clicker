@@ -99,10 +99,6 @@ public class Spawner : MonoBehaviour
 
     private void ItemSetToSleep(ItemController itemController)
     {
-        if (field)
-        {      
-            field.AddFreeField(itemController.GetPosX(), itemController.GetPosY());
-        }
         itemController.gameObject.SetActive(false);
     }
 
