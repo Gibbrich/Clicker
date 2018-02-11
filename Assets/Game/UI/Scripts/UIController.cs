@@ -13,7 +13,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private UILabel timerLabel;
     [SerializeField] private UILabel scoreLabel;
     [SerializeField] private UIItem correctItemUIController;
-    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private MenuPanelController menuPanel;
 
 	[Inject] private GameController gameController;
 
@@ -38,23 +38,19 @@ public class UIController : MonoBehaviour
 
     public void UpdatePlayerNameDisplay()
     {
-        /* todo    - implement
-         * @author - Артур
-         * @date   - 08.02.2018
-         * @time   - 21:43
-        */        
+        playerNameLabel.text = PreferenceManager.GetPlayerName();
     }
 
-    public void OpenPauseMenu()
+    public void OpenMenuPanel(bool isPause)
     {
         correctItemUIController.gameObject.SetActive(false);
-        pausePanel.SetActive(true);      
+        menuPanel.Open(isPause);
     }
 
-    public void ClosePauseMenu()
+    public void CloseMenuPanel()
     {
         correctItemUIController.gameObject.SetActive(true);
-        pausePanel.SetActive(false);
+        menuPanel.Close();
     }
 
 	public void OnResumeButtonClick()

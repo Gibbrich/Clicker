@@ -20,7 +20,7 @@ namespace Game
         private float correctItemShowTimeStamp = 0;
 
         private int score;
-        private GameState state;
+        private StateMachine<GameState> stateMachine;
 
         #endregion
     
@@ -33,6 +33,11 @@ namespace Game
             {
                 score = Mathf.Clamp(value, 0, gameSettings.PointsSettings.PointsTarget);
                 uiController.UpdateScoreDisplay(score);
+
+                if (score >= gameSettings.PointsSettings.PointsTarget)
+                {
+                    stateMachine.CurrentState = GameState.FINISHED;
+                }
             }
         }
 
@@ -43,7 +48,7 @@ namespace Game
 
         public GameState State
         {
-            get { return state; }
+            get { return stateMachine.CurrentState; }
         }
 
         #endregion
@@ -62,35 +67,17 @@ namespace Game
             uiController.UpdateTimerDisplay(clock.TimeInSeconds);
             uiController.UpdateScoreDisplay(score);
             uiController.UpdatePlayerNameDisplay();
+            
+            stateMachine = new StateMachine<GameState>();
+            stateMachine.AddState(GameState.PLAY, PlayStateOnStart, PlayStateOnUpdate);
+            stateMachine.AddState(GameState.PAUSE, PauseStateOnStart, PauseStateOnUpdate);
+            stateMachine.AddState(GameState.FINISHED, FinishedStateOnStart);
+            stateMachine.CurrentState = GameState.PLAY;
         }
 
         private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (state == GameState.PAUSE)
-                {
-					UnpauseGame();
-                }
-                else
-                {
-                    state = GameState.PAUSE;
-                    clock.Pause();
-                    uiController.OpenPauseMenu();
-                }
-            }
-            
-            if (state == GameState.PLAY)
-            {
-                clock.Update(Time.deltaTime);
-
-                if (Time.time - correctItemShowTimeStamp >= gameSettings.TimingSettings.ItemDisplayTime)
-                {
-                    ChangeCorrectItem();
-                    Score -= gameSettings.PointsSettings.TimeOutPenalty;
-            
-                }
-            }
+        {           
+            stateMachine.Update();
         }
 
         private void OnDestroy()
@@ -112,7 +99,12 @@ namespace Game
             uiController.UpdateDisplayedItem(correctItem.Type, correctItem.Color);
         
             correctItemShowTimeStamp = Time.time;
-        }    
+        }
+        
+        public void UnpauseGame()
+        {
+            stateMachine.CurrentState = GameState.PLAY;
+        }
     
         #endregion
     
@@ -129,7 +121,7 @@ namespace Game
     
         private void OnClockExpired()
         {
-			state = GameState.FINISHED;
+            stateMachine.CurrentState = GameState.FINISHED;
         }
 
         private void PlaceItem(Action placeItemAction, int maxCount)
@@ -143,12 +135,51 @@ namespace Game
             }
         }
 
-		public void UnpauseGame()
-		{
-			state = GameState.PLAY;
-			clock.Unpause();
-			uiController.ClosePauseMenu();
-		}
+        private void PlayStateOnStart()
+        {
+            clock.Unpause();
+            uiController.CloseMenuPanel();
+        }
+
+        private void PlayStateOnUpdate()
+        {
+            clock.Update(Time.deltaTime);
+
+            if (Time.time - correctItemShowTimeStamp >= gameSettings.TimingSettings.ItemDisplayTime)
+            {
+                ChangeCorrectItem();
+                Score -= gameSettings.PointsSettings.TimeOutPenalty;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                stateMachine.CurrentState = GameState.PAUSE;
+            }
+        }
+        
+        private void PauseStateOnStart()
+        {
+            clock.Pause();
+            uiController.OpenMenuPanel(true);
+        }
+
+        private void PauseStateOnUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UnpauseGame();
+            }
+        }
+
+        private void FinishedStateOnStart()
+        {
+            uiController.OpenMenuPanel(false);
+
+            if (score > PreferenceManager.GetPlayerRecord())
+            {
+                PreferenceManager.SetPlayerNameAndPoints(PreferenceManager.GetPlayerName(), score);                
+            }
+        }
     
         #endregion
     }
