@@ -70,9 +70,7 @@ namespace Game
             {
                 if (state == GameState.PAUSE)
                 {
-                    state = GameState.PLAY;
-                    clock.Unpause();
-                    uiController.ClosePauseMenu();
+					UnpauseGame();
                 }
                 else
                 {
@@ -131,7 +129,7 @@ namespace Game
     
         private void OnClockExpired()
         {
-            state = GameState.PAUSE;
+			state = GameState.FINISHED;
         }
 
         private void PlaceItem(Action placeItemAction, int maxCount)
@@ -144,6 +142,13 @@ namespace Game
                 }
             }
         }
+
+		public void UnpauseGame()
+		{
+			state = GameState.PLAY;
+			clock.Unpause();
+			uiController.ClosePauseMenu();
+		}
     
         #endregion
     }
@@ -151,6 +156,7 @@ namespace Game
     public enum GameState
     {
         PLAY,
-        PAUSE
+        PAUSE,
+		FINISHED
     }
 }

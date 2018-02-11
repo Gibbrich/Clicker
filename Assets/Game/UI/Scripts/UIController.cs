@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Game;
 using UnityEngine;
+using Zenject;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private UILabel scoreLabel;
     [SerializeField] private UIItem correctItemUIController;
     [SerializeField] private GameObject pausePanel;
+
+	[Inject] private GameController gameController;
 
     #endregion
     
@@ -52,6 +56,22 @@ public class UIController : MonoBehaviour
         correctItemUIController.gameObject.SetActive(true);
         pausePanel.SetActive(false);
     }
+
+	public void OnResumeButtonClick()
+	{
+		gameController.UnpauseGame();
+	}
+
+	public void OnExitButtonClick()
+	{
+		Application.Quit ();
+	}
+
+	public void OnMainMenuButtonClick()
+	{
+		SceneManager.LoadScene ("MainMenu");
+	}
+
     
     #endregion
 }

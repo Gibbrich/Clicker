@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  boundary: 1
+  boundary: 10
 --- !u!1001 &415243467
 Prefab:
   m_ObjectHideFlags: 0

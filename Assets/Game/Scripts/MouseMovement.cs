@@ -34,7 +34,7 @@ public class MouseMovement : MonoBehaviour
 
     void Update()
     {
-        if (gameController.State ==GameState.PLAY)
+        if (gameController.State == GameState.PLAY)
         {
             if (Input.mousePosition.x > width - boundary)
             {
